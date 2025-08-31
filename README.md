@@ -29,5 +29,5 @@ This will be populated with a list and brief description of the major mathematic
 
 # Changelog
 
-A changelog for each version is present [here](Changlog.md). I'll try and keep it updated with each major commit. The version numbering system is in three parts, the rightmost number is very minor and reserved for bug fixes. The next-to-rightmost number (i.e. the middle number) is reserved for a new routine implementation. The leftmost number is reserved at the moment for once everything is implemented, meaning it will be in version 0.X.X until everything is implemented, after which it will become version 1.X.X. I'm not sure what will update that number afterwards, but oh well.
+A changelog for each version is present [here](Changelog.md). I'll try and keep it updated with each major commit. The version numbering system is in three parts, the rightmost number is very minor and reserved for bug fixes. The next-to-rightmost number (i.e. the middle number) is reserved for a new routine implementation. The leftmost number is reserved at the moment for once everything is implemented, meaning it will be in version 0.X.X until everything is implemented, after which it will become version 1.X.X. I'm not sure what will update that number afterwards, but oh well.
 
