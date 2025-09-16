@@ -13,10 +13,11 @@ int main()
 		[](const double x) -> double { return std::sin(x); }
 	);
 
-	chmath::Plotter plotter;
+	chmath::Plotter<double> plotter;
 	plotter.setOutputFile("plot.pdf")
-		.setTitle("Title for the plot")
-		.setAxisLabels({"x-axis", "y-axis"});
+		.set_title("Title for the plot")
+		.set_xlabel("x-axis")
+		.set_ylabel("y-axis");
 	plotter.plot(X,y, "sin(x)");
 	plotter.save();
 	
