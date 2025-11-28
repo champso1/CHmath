@@ -1,64 +1,24 @@
-#ifndef __CHMATH__HPP
-#define __CHMATH__HPP
+module;
 
-#include <algorithm>
-#include <cstdint>
 #include <cstdlib>
-#include <iomanip>
-#include <limits>
-#include <type_traits>
 #include <vector>
-#include <iostream>
+#include <print>
+#include <algorithm>
+#include <string>
 #include <fstream>
+#include <sstream>
 #include <filesystem>
 #include <ranges>
 
-#include "common.hpp"
+#define CHMATH_JOIN0(a, b) a ## b
+#define CHMATH_JOIN(a, b) CHMATH_JOIN0(a, b)
 
-typedef unsigned int uint;
+export module chmath:plot;
 
-namespace chmath
+export namespace chmath
 {
-
-	/** @brief returns @a num equally space points between @min and @max
-	 *  @param min: The minimum bound (inclusive)
-	 *  @param max: The maximum bound (exclusive)
-	 *  @return An std::vector containing the points
-	 *  @note For a version of linspace that has an inclusive upper bound
-	 *  see @a linspace2
-	 */
-    template <typename T>
-	std::vector<T> linspace(T min, T max, uint num)
-	{
-		if (max < min)
-		{
-			std::cerr << "linspace(): max(" << max << ") is smaller than min(" << min << ")\n";
-			exit(EXIT_FAILURE);
-		}
-	    
-		uint i{0};
-		// TODO: why did I put this here?
-		// T diff{max-min};
-		std::vector<T> points(num);
-		std::ranges::generate(points, [&]() -> T {
-			return min + (max-min)/num * i++;
-		});
-		return points;
-	}
-
-
-	// way to allow aliasing of the filesystem namespace internally
-	// worst case, this gives chmath::fs to the user... who cares!
-	namespace fs
-	{
-		using std::filesystem::path;
-		using std::filesystem::exists;
-		using std::filesystem::create_directory;
-	}
-
-
 	template <typename T>
-	concept Arithmetic = std::is_arithmetic<T>::value;
+	concept Arithmetic = std::is_arithmetic_v<T>;
 	
 	/** @brief provides a (relatively) simple Gnuplot interface
 	 */
@@ -74,10 +34,10 @@ namespace chmath
 		 */
 		///@{
 		std::string _script_file_name{}; //!< name of output file
-		fs::path _script_file_path{}; //!< path to script file
+		std::filesystem::path _script_file_path{}; //!< path to script file
 		std::ofstream _script_file{}; //!< filestream for handling script file
 		std::string _data_file_name{}; //!< name of data file
-	    fs::path _data_file_path{}; //!< path to data file
+	    std::filesystem::path _data_file_path{}; //!< path to data file
 		std::ofstream _data_file{}; //!< filestream for handling data file
 		///@}
 
@@ -190,26 +150,26 @@ namespace chmath
 
 
 		
-#define GEN_PLOTTER_SET0(name, T)										\
+#define GEN_PLOTTER_SET_FUNC0(name, T)									\
 		inline Plotter& CHMATH_JOIN(set_, name)(T const& name)			\
 		{																\
 			CHMATH_JOIN(_,name) = name;									\
 			return *this;												\
 		}
-#define GEN_PLOTTER_SET(name, T) GEN_PLOTTER_SET0(name, T)
+#define GEN_PLOTTER_SET_FUNC(name, T) GEN_PLOTTER_SET_FUNC0(name, T)
 
-		GEN_PLOTTER_SET(title, std::string)
-		GEN_PLOTTER_SET(xlabel, std::string)
-		GEN_PLOTTER_SET(ylabel, std::string)
-	    GEN_PLOTTER_SET(xmin, range_type)
-		GEN_PLOTTER_SET(xmax, range_type)
-		GEN_PLOTTER_SET(ymin, range_type)
-		GEN_PLOTTER_SET(ymax, range_type)
-		GEN_PLOTTER_SET(line_width, enum_type)
-		GEN_PLOTTER_SET(line_style, enum_type)
-	    GEN_PLOTTER_SET(legend_loc, enum_type)
-		GEN_PLOTTER_SET(border_thickness, enum_type)
-		GEN_PLOTTER_SET(line_color, enum_type)
+		GEN_PLOTTER_SET_FUNC(title, std::string)
+		GEN_PLOTTER_SET_FUNC(xlabel, std::string)
+		GEN_PLOTTER_SET_FUNC(ylabel, std::string)
+	    GEN_PLOTTER_SET_FUNC(xmin, range_type)
+		GEN_PLOTTER_SET_FUNC(xmax, range_type)
+		GEN_PLOTTER_SET_FUNC(ymin, range_type)
+		GEN_PLOTTER_SET_FUNC(ymax, range_type)
+		GEN_PLOTTER_SET_FUNC(line_width, enum_type)
+		GEN_PLOTTER_SET_FUNC(line_style, enum_type)
+	    GEN_PLOTTER_SET_FUNC(legend_loc, enum_type)
+		GEN_PLOTTER_SET_FUNC(border_thickness, enum_type)
+		GEN_PLOTTER_SET_FUNC(line_color, enum_type)
 
 		
 		/** @brief sets the output file to place the generated plot
@@ -229,9 +189,9 @@ namespace chmath
 				std::string::size_type dot_pos = file_name.find(".");
 				if (dot_pos == std::string::npos)
 				{
-					std::cerr << "setOutputFile(): Failed to deduce the type of the output file."
-							  << " Either specify an extension in the file name,"
-							  << " or override the file type.\n";
+					std::println(stderr, "setOutputFile(): Failed to deduce the type of the output file.");
+					std::println(stderr, "                 Either specify a supported extension in the file name,");
+					std::println(stderr, "                 or override the filetype as a parameter.");
 
 					exit(EXIT_FAILURE);
 				}
@@ -245,10 +205,8 @@ namespace chmath
 					output_file_type = PNG;
 				else
 				{
-					std::cerr << "setOutputFile(): File extension '" << ext
-							  << "' isn't recognized."
-							  << " Either specify a known extension,"
-							  << " or overrid ethe file type.\n";
+					std::println(stderr, "setOutputFile: File extension '{}' isn't recognized.", ext);
+					std::println(stderr, "               Either specify a supported extension or override the filetype.");
 
 					exit(EXIT_FAILURE);
 				}
@@ -275,16 +233,16 @@ namespace chmath
 		{
 			if (X.size() != y.size())
 			{
-				std::cerr << "plot(): X size(" << X.size() << ") and y size(" << y.size() << ") differ.\n";
+				std::println(stderr, "plot(): X size ({}) and y size ({}) differ.", X.size(), y.size());
 				exit(EXIT_FAILURE);
 			}
 
 		    _data_file_path = DATA_DIR;
-			if (!fs::exists(_data_file_path))
+			if (!std::filesystem::exists(_data_file_path))
 			{
-				if(!fs::create_directory(_data_file_path))
+				if(!std::filesystem::create_directory(_data_file_path))
 				{
-					std::cerr << "plot(): Failed to create data output directory '" << _data_file_path.string() << "'.\n";
+					std::println(stderr, "plot(): Failed to create output data directory '{}'.", _data_file_path.string());
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -296,16 +254,12 @@ namespace chmath
 			_data_file.open(_data_file_path.make_preferred(), std::ios_base::out);
 			if (!_data_file)
 			{
-				std::cerr << "plot(): failed to open file '" << _data_file_path.string() << "'.\n";
+				std::println(stderr, "plot: Failed to open file '{}'.", _data_file_path.string());
 				exit(EXIT_FAILURE);
 			}
 
-			_data_file << std::setprecision(std::numeric_limits<data_type>::max_digits10);
 			for (std::tuple<data_type,data_type> x : std::ranges::zip_view{X, y})
-			{
-				_data_file  << std::get<0>(x) << '\t'
-						  << std::get<1>(x) << '\n';
-			}
+				_data_file << std::get<0>(x) << '\t' << std::get<1>(x) << '\n';
 		    
 			_X = X;
 			_y = y;
@@ -324,11 +278,11 @@ namespace chmath
 		inline Plotter& save()
 		{
 			_script_file_path = SCRIPT_DIR;
-			if (!fs::exists(_script_file_path))
+			if (!std::filesystem::exists(_script_file_path))
 			{
-				if (!fs::create_directory(_script_file_path))
+				if (!std::filesystem::create_directory(_script_file_path))
 				{
-					std::cerr << "plot(): Failed to create script output directory\n";
+					std::println(stderr, "plot(): Failed to create script output directory.");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -338,7 +292,7 @@ namespace chmath
 			_script_file.open(_script_file_path);
 			if (!_script_file)
 			{
-				std::cerr << "Plotter::save(): failed to open script file '" << _script_file_path.string() << "'.\n";
+				std::println(stderr, "save(): failed to open the script file '{}'.", _script_file_path.string());
 				exit(EXIT_FAILURE);
 			}
 
@@ -350,10 +304,11 @@ namespace chmath
 				case AUTO:
 				default:
 				{
-					std::cerr << "Plotter::save(): invalid output file/terminal type\n";
+					std::println(stderr, "save(): Invalid output file/terminal type.");
 					exit(EXIT_FAILURE);
 				}
 			}
+
 			_script_file << "set terminal " << terminal_type << " enhanced notransparent\n";
 			_script_file << "set output '" << _output_file_name << "'\n";
 			
@@ -381,23 +336,23 @@ namespace chmath
 				
 				_ymin = ymin - three_percent;
 				_ymax = ymax + three_percent;
-			}			
+			}
 			_script_file << _genLine_xrange() << '\n';
 			_script_file << _genLine_yrange() << '\n';
 			_script_file << "set xlabel '" << _xlabel << "'\n";
 			_script_file << "set ylabel '" << _ylabel << "'\n";
 			_script_file << "set title '" << _title << "'\n";
-	    			
+
 			_script_file << "plot '" << _data_file_path.string() << "' with lines title '" << _title << "'\n";
 			_script_file.close();
 
 			std::ostringstream command{};
 			command << "gnuplot " << _script_file_path.string();
-			std::cout << "Plotter::save(): the command is: " << command.str() << " \n";
+			std::println("save(): the command is {}.", command.str());
 
 			if (system(command.str().c_str()) != 0)
 			{
-				std::cerr << "save(): Failed to create child shell to call gnuplot, or gnuplot call failed. Is it on your PATH?\n";
+				std::println(stderr, "save(): Failed to create child shell to call gnuplot, or gnuplot call failed.");
 				exit(EXIT_FAILURE);
 			}
 
@@ -419,11 +374,7 @@ namespace chmath
 		{
 			if (_ymin >= _ymax)
 			{
-				std::cerr << "_genLine_yrange(): minimum y value ("
-						  << _ymin
-						  << ") is equal to or larger than maximum y value ("
-						  << _ymax
-						  << "\n";
+				std::println(stderr, "_genLine_yrange(): minimum y value ({}) is equal to or larger than maximum y value ({})", _ymin, _ymax);
 				exit(EXIT_FAILURE);
 			}
 		
@@ -437,16 +388,12 @@ namespace chmath
 		{
 			if (_xmin >= _xmax)
 			{
-				std::cerr << "_genLine_xrange(): minimum x value ("
-						  << _xmin
-						  << ") is equal to or larger than maximum x value ("
-						  << _xmax
-						  << "\n";
+				std::println(stderr, "_genLine_xrange(): minimum x value ({}) is equal to or larger than maximum x value ({})", _xmin, _xmax);
 				exit(EXIT_FAILURE);
 			}
 		
 			std::ostringstream ss{};
-			ss << "set xrange [" << _xmin << ":" << _xmax << "]";
+			ss << "set yrange [" << _xmin << ":" << _xmax << "]";
 			return ss.str();
 		}
 
@@ -458,7 +405,4 @@ namespace chmath
 
 	template <Arithmetic T>
 	const std::string Plotter<T>::SCRIPT_DIR{"scripts"};
-	
 } // namespace chmath
-
-#endif // __CHMATH__HPP

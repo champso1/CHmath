@@ -1,15 +1,21 @@
-cmake_minimum_required(VERSION 3.25)
-project(chmath VERSION 0.0.1 LANGUAGES CXX)
-set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+cmake_minimum_required(VERSION 3.30)
+project(chmath VERSION 0.0.2 LANGUAGES CXX)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
-# grab all the source files
-file(GLOB_RECURSE sources ${CMAKE_SOURCE_DIR}/src/* ${CMAKE_SOURCE_DIR}/include/*)
+set(mods
+  include/chmath/chmath.cppm
+  include/chmath/plot.cppm
+  include/chmath/table.cppm
+)
 
-# we build a static library.
-add_library(chmath STATIC ${sources})
-target_include_directories(chmath PUBLIC ${CMAKE_SOURCE_DIR}/include)
+add_library(chmath STATIC)
+target_sources(chmath PUBLIC
+  FILE_SET cxx_module_files
+  TYPE CXX_MODULES
+  FILES ${mods}
+)
 target_compile_options(chmath PUBLIC -Wall -Wextra -Wpedantic)
 
 add_subdirectory(tests)
