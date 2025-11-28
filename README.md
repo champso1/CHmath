@@ -4,27 +4,33 @@ This is going to be a repository for me to place all of the mathematical routine
 
 # Building
 
-C++23 is required. It doesn't have to be, I could've not written C++23 code, but I want to learn modern C++, so I did it anyway. This project also uses CMake >= 3.30.
+CMake >= 3.30 and C++23 is required, as well as the Ninja build tool. Further, your compiler must have support for modules.
 
 The building process is standard CMake building:
 
 ```
 mkdir build
 cd build
-cmake .. -G <generator> -DCMAKE_BUILD_TYPE=<build_type>
-cmake --build . -- <build_tool_args>
+cmake ..
+ninja
 ```
 
-Of course, if you want to leave everything default just a `cmake ..` and `cmake --build .` are sufficient. If using Ninja or GNU Makefiles, `<build_tool_args>` can be `-jN` to build in parallel, or just `-j` to utilize all cores. Performance differences between Release and Debug at this stage are insignificant, so that flag can be dropped as well.
+Alternatively, there are some presets setup for Unix `clang` users, which allows one to do
 
-Along with the library itself, it will build a single "test" called `main`, the executable for which is (from within the build directory) `tests/main/main` (or `tests/main/main.exe` on Windows). This file can be edited in (from the root directory) `tests/main/main.cpp`. It currently plots sin(x).
+```
+cmake -S . --preset clang-X-linux
+cd bin/clang-X-linux
+ninja
+```
 
+where `X` can be either `release` or `debug`. Successfully compiling will yield a `tests` folder, with two tests inside: `plotting` and `table`, inside of which each contain an executable that showcases the corresponding functionality.
 
 # Mathematical Routines
 
 This will be populated with a list and brief description of the major mathematical routines that will be implemented.
 
-- `linspace(min, max, num)`: Generates a list of `num` evenly spaced points between `min` and `max`. The upper bound is not inclusive.
+- `linspace(min, max, num)`: Generates a list of `num` linearly spaced points between `min` and `max`. The upper bound is not inclusive.
+- `logspace(min, max, num)`: Generates a list of `num` logarithmically points between `min` and `max`. The upper bound is not inclusive.
 
 
 # Changelog
