@@ -12,4 +12,4 @@ Moved to using C++ Modules. In principle, I'd like to also be able to use the `i
 
 # 0.3.1 (24 December, 2025)
 
-Actually implemented a super basic table structure. Need to figure out a way to more easily/dynamically handle widths/precisions for various different types. Also would like to have a way to print a LaTeX table.
+Actually implemented a super basic table structure. Need to figure out a way to more easily/dynamically handle widths/precisions for various different types. Also would like to have a way to print a LaTeX table. Another big addition is the `CHutil` submodule which at the moment just provides a way to handle the creation of processes on Windows and UNIX-like systems and basic logging (still need to update the code to handle this new change). Sometime soon I'll actually add mathematical methods!
