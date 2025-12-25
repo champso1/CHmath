@@ -1,19 +1,12 @@
 module;
-
+#include <cinttypes>
 #include <cstdlib>
-#include <vector>
-#include <print>
-#include <algorithm>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <filesystem>
-#include <ranges>
+export module chmath:plot;
+import std;
 
+using uint = unsigned;
 #define CHMATH_JOIN0(a, b) a ## b
 #define CHMATH_JOIN(a, b) CHMATH_JOIN0(a, b)
-
-export module chmath:plot;
 
 export namespace chmath
 {
@@ -189,11 +182,11 @@ export namespace chmath
 				std::string::size_type dot_pos = file_name.find(".");
 				if (dot_pos == std::string::npos)
 				{
-					std::println(stderr, "setOutputFile(): Failed to deduce the type of the output file.");
-					std::println(stderr, "                 Either specify a supported extension in the file name,");
-					std::println(stderr, "                 or override the filetype as a parameter.");
+					std::println("setOutputFile(): Failed to deduce the type of the output file.");
+					std::println("                 Either specify a supported extension in the file name,");
+					std::println("                 or override the filetype as a parameter.");
 
-					exit(EXIT_FAILURE);
+					exit(1);
 				}
 
 				std::string ext = file_name.substr(dot_pos + 1);
@@ -205,10 +198,10 @@ export namespace chmath
 					output_file_type = PNG;
 				else
 				{
-					std::println(stderr, "setOutputFile: File extension '{}' isn't recognized.", ext);
-					std::println(stderr, "               Either specify a supported extension or override the filetype.");
+					std::println("setOutputFile: File extension '{}' isn't recognized.", ext);
+					std::println("               Either specify a supported extension or override the filetype.");
 
-					exit(EXIT_FAILURE);
+					exit(1);
 				}
 			}
 
@@ -233,8 +226,8 @@ export namespace chmath
 		{
 			if (X.size() != y.size())
 			{
-				std::println(stderr, "plot(): X size ({}) and y size ({}) differ.", X.size(), y.size());
-				exit(EXIT_FAILURE);
+				std::println("plot(): X size ({}) and y size ({}) differ.", X.size(), y.size());
+				exit(1);
 			}
 
 		    _data_file_path = DATA_DIR;
@@ -242,8 +235,8 @@ export namespace chmath
 			{
 				if(!std::filesystem::create_directory(_data_file_path))
 				{
-					std::println(stderr, "plot(): Failed to create output data directory '{}'.", _data_file_path.string());
-					exit(EXIT_FAILURE);
+					std::println("plot(): Failed to create output data directory '{}'.", _data_file_path.string());
+					exit(1);
 				}
 			}
 
@@ -254,8 +247,8 @@ export namespace chmath
 			_data_file.open(_data_file_path.make_preferred(), std::ios_base::out);
 			if (!_data_file)
 			{
-				std::println(stderr, "plot: Failed to open file '{}'.", _data_file_path.string());
-				exit(EXIT_FAILURE);
+				std::println("plot: Failed to open file '{}'.", _data_file_path.string());
+				exit(1);
 			}
 
 			for (std::tuple<data_type,data_type> x : std::ranges::zip_view{X, y})
@@ -282,8 +275,8 @@ export namespace chmath
 			{
 				if (!std::filesystem::create_directory(_script_file_path))
 				{
-					std::println(stderr, "plot(): Failed to create script output directory.");
-					exit(EXIT_FAILURE);
+					std::println("plot(): Failed to create script output directory.");
+					exit(1);
 				}
 			}
 
@@ -292,8 +285,8 @@ export namespace chmath
 			_script_file.open(_script_file_path);
 			if (!_script_file)
 			{
-				std::println(stderr, "save(): failed to open the script file '{}'.", _script_file_path.string());
-				exit(EXIT_FAILURE);
+				std::println("save(): failed to open the script file '{}'.", _script_file_path.string());
+				exit(1);
 			}
 
 			std::string terminal_type{};
@@ -304,8 +297,8 @@ export namespace chmath
 				case AUTO:
 				default:
 				{
-					std::println(stderr, "save(): Invalid output file/terminal type.");
-					exit(EXIT_FAILURE);
+					std::println("save(): Invalid output file/terminal type.");
+					exit(1);
 				}
 			}
 
@@ -352,8 +345,8 @@ export namespace chmath
 
 			if (system(command.str().c_str()) != 0)
 			{
-				std::println(stderr, "save(): Failed to create child shell to call gnuplot, or gnuplot call failed.");
-				exit(EXIT_FAILURE);
+				std::println("save(): Failed to create child shell to call gnuplot, or gnuplot call failed.");
+				exit(1);
 			}
 
 			return *this;
@@ -374,8 +367,8 @@ export namespace chmath
 		{
 			if (_ymin >= _ymax)
 			{
-				std::println(stderr, "_genLine_yrange(): minimum y value ({}) is equal to or larger than maximum y value ({})", _ymin, _ymax);
-				exit(EXIT_FAILURE);
+				std::println("_genLine_yrange(): minimum y value ({}) is equal to or larger than maximum y value ({})", _ymin, _ymax);
+				exit(1);
 			}
 		
 			std::ostringstream ss{};
@@ -388,8 +381,8 @@ export namespace chmath
 		{
 			if (_xmin >= _xmax)
 			{
-				std::println(stderr, "_genLine_xrange(): minimum x value ({}) is equal to or larger than maximum x value ({})", _xmin, _xmax);
-				exit(EXIT_FAILURE);
+				std::println("_genLine_xrange(): minimum x value ({}) is equal to or larger than maximum x value ({})", _xmin, _xmax);
+				exit(1);
 			}
 		
 			std::ostringstream ss{};

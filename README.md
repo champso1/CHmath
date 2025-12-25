@@ -27,10 +27,13 @@ where `X` can be either `release` or `debug`. Successfully compiling will yield 
 
 # Mathematical Routines
 
-This will be populated with a list and brief description of the major mathematical routines that will be implemented.
+- `linspace(min, max, num)`: Generates a list of `num` linearly spaced points between `min` and `max`. Performs like the Python equivalent.
+- `logspace(min, max, num)`: Generates a list of `num` logarithmically points between `min` and `max`. Performs like the Python equivalent.
 
-- `linspace(min, max, num)`: Generates a list of `num` linearly spaced points between `min` and `max`. The upper bound is not inclusive.
-- `logspace(min, max, num)`: Generates a list of `num` logarithmically points between `min` and `max`. The upper bound is not inclusive.
+# Utilities
+
+- `Table`: Generates a simple text-based table using an `std::vector` of column names and `std::vectors` containing the data points. Supports any type of data points, so long as the type is formattable via `std::format`. Floating-point types are specialized such that the precision is half of the available width of the column.
+- `Plotter`: Provides a basic interface to `gnuplot` with commands to set the title, x/y labels, and some other primitive settings. Obviously requires the `gnuplot` utility to be available on the command line.
 
 
 # Changelog

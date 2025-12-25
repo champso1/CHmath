@@ -9,3 +9,7 @@ Removed `linspace2()` because why would I have that, if the user wants an inclus
 # 0.2.1 (28 November, 2025)
 
 Moved to using C++ Modules. In principle, I'd like to also be able to use the `import std;` thing, but as far as I'm aware that's very experimental, and since modules are already experimental enough as it is (despite being introduced in C++20), I want to avoid that for now. I've also moved to using `std::print` as much as possible; it's so much better than the `<<` operator... Introduced `logspace` just to have another feature. Next steps are finishing the table implementation, followed by actual computational stuff.
+
+# 0.3.1 (24 December, 2025)
+
+Actually implemented a super basic table structure. Need to figure out a way to more easily/dynamically handle widths/precisions for various different types. Also would like to have a way to print a LaTeX table.

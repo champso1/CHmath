@@ -1,2 +1,2 @@
-add_subdirectory(plotting-modules)
-add_subdirectory(table-modules)
+add_subdirectory(plotting)
+add_subdirectory(table)
